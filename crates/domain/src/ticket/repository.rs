@@ -1,0 +1,1 @@
+// TicketRepository trait

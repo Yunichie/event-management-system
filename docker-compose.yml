@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ticketing
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: event_ticketing
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:

@@ -1,0 +1,1 @@
+// EventRepository trait
