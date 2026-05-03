@@ -7,7 +7,7 @@ edition = "2021"
 domain = { path = "../domain" }
 async-trait = "0.1"
 serde = { version = "1", features = ["derive"] }
-thiserror = "1"
+thiserror = "2"
 uuid = { version = "1", features = ["v4", "serde"] }
 chrono = { version = "0.4", features = ["serde"] }
 rust_decimal = { version = "1", features = ["serde-with-str"] }

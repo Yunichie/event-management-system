@@ -7,6 +7,6 @@ use rocket::Route;
 
 /// Collects all API routes from all sub-modules.
 pub fn all_routes() -> Vec<Route> {
-    // Phase 5: mount all routes here
+    // TODO: mount all routes here
     vec![]
 }

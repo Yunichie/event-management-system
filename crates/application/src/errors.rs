@@ -1,1 +1,1 @@
-// Application-level errors — placeholder for Phase 3
+// Application-level errors

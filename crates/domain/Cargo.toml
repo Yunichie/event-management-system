@@ -7,4 +7,4 @@ edition = "2021"
 uuid = { version = "1", features = ["v4"] }
 rust_decimal = "1"
 chrono = { version = "0.4", features = ["serde"] }
-thiserror = "1"
+thiserror = "2"
