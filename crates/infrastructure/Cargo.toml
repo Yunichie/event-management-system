@@ -3,5 +3,18 @@ name = "infrastructure"
 version.workspace = true
 edition.workspace = true
 
+[package]
+domain = { workspace = true }
+application = { workspace = true }
+sqlx = { workspace = true }
+async-trait = { workspace = true }
+reqwest = { workspace = true }
+tokio = { workspace = true }
+anyhow = { workspace = true }
+serde = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+rust_decimal = { workspace = true }
+
 [lints]
 workspace = true
