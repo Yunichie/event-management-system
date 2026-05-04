@@ -1,15 +1,15 @@
-[package]
+﻿[package]
 name = "api"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-application = { path = "../application" }
-infrastructure = { path = "../infrastructure" }
-rocket = { version = "0.5", features = ["json"] }
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-jsonwebtoken = "10"
-tokio = { version = "1", features = ["full"] }
-uuid = { version = "1", features = ["serde"] }
-chrono = { version = "0.4", features = ["serde"] }
+application = { workspace = true }
+infrastructure = { workspace = true }
+rocket = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+jsonwebtoken = { workspace = true }
+tokio = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
