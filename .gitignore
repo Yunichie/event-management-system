@@ -4,7 +4,7 @@ debug/
 *.pdb
 
 # Dependencies
-Cargo.lock
+# Cargo.lock
 
 # Environment
 .env
