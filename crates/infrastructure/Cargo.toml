@@ -3,7 +3,7 @@ name = "infrastructure"
 version.workspace = true
 edition.workspace = true
 
-[package]
+[domain]
 domain = { workspace = true }
 application = { workspace = true }
 sqlx = { workspace = true }
