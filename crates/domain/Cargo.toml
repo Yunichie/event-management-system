@@ -3,7 +3,7 @@ name = "domain"
 version.workspace = true
 edition.workspace = true
 
-[domain]
+[dependencies]
 uuid = { workspace = true }
 rust_decimal = { workspace = true }
 chrono = { workspace = true }
