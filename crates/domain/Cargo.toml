@@ -1,4 +1,4 @@
-﻿[package]
+[package]
 name = "domain"
 version.workspace = true
 edition.workspace = true
@@ -8,6 +8,11 @@ uuid = { workspace = true }
 rust_decimal = { workspace = true }
 chrono = { workspace = true }
 thiserror = { workspace = true }
+serde = { workspace = true }
+async-trait = { workspace = true }
 
 [lints]
 workspace = true
+
+[dev-dependencies]
+rust_decimal_macros = "1"
