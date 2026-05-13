@@ -31,7 +31,7 @@ pub enum RefundStatus {
     Requested,
     Approved,
     Rejected,
-    Processed,
+    PaidOut,
 }
 
 impl std::fmt::Display for RefundStatus {
@@ -40,7 +40,7 @@ impl std::fmt::Display for RefundStatus {
             RefundStatus::Requested => write!(f, "Requested"),
             RefundStatus::Approved => write!(f, "Approved"),
             RefundStatus::Rejected => write!(f, "Rejected"),
-            RefundStatus::Processed => write!(f, "Processed"),
+            RefundStatus::PaidOut => write!(f, "PaidOut"),
         }
     }
 }

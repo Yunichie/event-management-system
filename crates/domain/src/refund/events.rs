@@ -40,12 +40,13 @@ impl DomainEvent for RefundRejected {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RefundProcessed {
+pub struct RefundPaidOut {
     pub refund_id: RefundId,
+    pub payment_reference: String,
 }
 
-impl DomainEvent for RefundProcessed {
+impl DomainEvent for RefundPaidOut {
     fn event_name(&self) -> &'static str {
-        "RefundProcessed"
+        "RefundPaidOut"
     }
 }
