@@ -28,17 +28,19 @@ impl std::fmt::Display for BookingId {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum BookingStatus {
-    Pending,
+    PendingPayment,
     Paid,
-    Cancelled,
+    Expired,
+    Refunded,
 }
 
 impl std::fmt::Display for BookingStatus {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            BookingStatus::Pending => write!(f, "Pending"),
+            BookingStatus::PendingPayment => write!(f, "PendingPayment"),
             BookingStatus::Paid => write!(f, "Paid"),
-            BookingStatus::Cancelled => write!(f, "Cancelled"),
+            BookingStatus::Expired => write!(f, "Expired"),
+            BookingStatus::Refunded => write!(f, "Refunded"),
         }
     }
 }
