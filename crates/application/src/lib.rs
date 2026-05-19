@@ -1,7 +1,7 @@
-pub mod errors;
-pub mod ports;
-pub mod dto;
-pub mod event;
 pub mod booking;
-pub mod ticket;
+pub mod dto;
+pub mod errors;
+pub mod event;
+pub mod ports;
 pub mod refund;
+pub mod ticket;
