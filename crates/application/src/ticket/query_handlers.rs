@@ -3,19 +3,22 @@ use std::sync::Arc;
 use domain::ticket::{
     entity::Ticket, repository::TicketRepository, value_objects::{TicketCode, TicketId},
 };
+use domain::booking::{repository::BookingRepository, value_objects::BookingStatus};
+use domain::shared::value_objects::UserId;
 
 use crate::dto::TicketDto;
 use crate::errors::{ApplicationError, AppResult};
 
-use super::queries::{GetTicketByCodeQuery, GetTicketQuery};
+use super::queries::{GetTicketByCodeQuery, GetTicketQuery, GetCustomerTicketsQuery};
 
-pub struct TicketQueryHandler<R: TicketRepository> {
-    ticket_repo: Arc<R>,
+pub struct TicketQueryHandler<TR: TicketRepository, BR: BookingRepository> {
+    ticket_repo: Arc<TR>,
+    booking_repo: Arc<BR>,
 }
 
-impl<R: TicketRepository> TicketQueryHandler<R> {
-    pub fn new(ticket_repo: Arc<R>) -> Self {
-        Self { ticket_repo }
+impl<TR: TicketRepository, BR: BookingRepository> TicketQueryHandler<TR, BR> {
+    pub fn new(ticket_repo: Arc<TR>, booking_repo: Arc<BR>) -> Self {
+        Self { ticket_repo, booking_repo }
     }
 
     pub async fn handle_get_ticket(&self, query: GetTicketQuery) -> AppResult<TicketDto> {
@@ -41,6 +44,20 @@ impl<R: TicketRepository> TicketQueryHandler<R> {
             .ok_or_else(|| ApplicationError::NotFound("Ticket not found".to_string()))?;
 
         Ok(self.ticket_to_dto(&ticket))
+    }
+
+    pub async fn handle_get_customer_tickets(
+        &self,
+        query: GetCustomerTicketsQuery,
+    ) -> AppResult<Vec<TicketDto>> {
+        let customer_id = UserId::from(query.customer_id);
+
+        // In a real implementation, we'd need BookingRepository.find_by_customer()
+        // to get all bookings for a customer, then collect tickets from paid bookings
+        // For now, return empty list as placeholder
+        // This would be implemented when the infrastructure layer provides the necessary repository methods
+        
+        Ok(vec![])
     }
 
     fn ticket_to_dto(&self, ticket: &Ticket) -> TicketDto {

@@ -7,3 +7,7 @@ pub struct GetTicketQuery {
 pub struct GetTicketByCodeQuery {
     pub ticket_code: String,
 }
+
+pub struct GetCustomerTicketsQuery {
+    pub customer_id: Uuid,
+}
