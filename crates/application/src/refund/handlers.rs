@@ -8,25 +8,42 @@ use domain::ticket::value_objects::TicketStatus;
 use crate::dto::RefundDto;
 use crate::errors::{ApplicationError, AppResult};
 use crate::ports::refund_service::RefundService;
+use crate::ports::notification::NotificationService;
 
 use super::commands::{
     ApproveRefundCommand, PayoutRefundCommand, RejectRefundCommand, RequestRefundCommand,
 };
 
-pub struct RefundCommandHandler<RR: RefundRepository, BR: BookingRepository, RS: RefundService> {
+pub struct RefundCommandHandler<
+    RR: RefundRepository,
+    BR: BookingRepository,
+    RS: RefundService,
+    NS: NotificationService,
+> {
     refund_repo: Arc<RR>,
     booking_repo: Arc<BR>,
     refund_service: Arc<RS>,
+    notification_service: Arc<NS>,
 }
 
-impl<RR: RefundRepository, BR: BookingRepository, RS: RefundService>
-    RefundCommandHandler<RR, BR, RS>
+impl<
+        RR: RefundRepository,
+        BR: BookingRepository,
+        RS: RefundService,
+        NS: NotificationService,
+    > RefundCommandHandler<RR, BR, RS, NS>
 {
-    pub fn new(refund_repo: Arc<RR>, booking_repo: Arc<BR>, refund_service: Arc<RS>) -> Self {
+    pub fn new(
+        refund_repo: Arc<RR>,
+        booking_repo: Arc<BR>,
+        refund_service: Arc<RS>,
+        notification_service: Arc<NS>,
+    ) -> Self {
         Self {
             refund_repo,
             booking_repo,
             refund_service,
+            notification_service,
         }
     }
 
@@ -113,6 +130,15 @@ impl<RR: RefundRepository, BR: BookingRepository, RS: RefundService>
         self.refund_repo.save(&mut refund).await?;
         self.booking_repo.save(&mut booking).await?;
 
+        // Send refund notification (don't fail if notification fails)
+        if let Err(e) = self
+            .notification_service
+            .send_refund_notification(&refund.user_id, &refund_id.to_string())
+            .await
+        {
+            eprintln!("Failed to send refund notification: {}", e);
+        }
+
         Ok(self.refund_to_dto(&refund))
     }
 
@@ -123,6 +149,14 @@ impl<RR: RefundRepository, BR: BookingRepository, RS: RefundService>
             .find_by_id(refund_id)
             .await?
             .ok_or_else(|| ApplicationError::NotFound("Refund not found".to_string()))?;
+
+        if cmd.rejection_reason.trim().is_empty() {
+            return Err(ApplicationError::Domain(
+                domain::shared::errors::DomainError::BusinessRule(
+                    "Rejection reason is required".to_string(),
+                ),
+            ));
+        }
 
         refund.reject(cmd.rejection_reason)?;
         self.refund_repo.save(&mut refund).await?;
