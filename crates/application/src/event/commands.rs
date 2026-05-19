@@ -29,3 +29,8 @@ pub struct AddTicketCategoryCommand {
     pub sales_start: DateTime<Utc>,
     pub sales_end: DateTime<Utc>,
 }
+
+pub struct DisableTicketCategoryCommand {
+    pub event_id: Uuid,
+    pub category_id: Uuid,
+}
