@@ -9,27 +9,50 @@ use domain::event::{
     value_objects::{CategoryId, EventId, EventStatus},
 };
 use domain::shared::value_objects::{Money, UserId};
+use domain::ticket::repository::TicketRepository;
 
 use crate::dto::BookingDto;
 use crate::errors::{ApplicationError, AppResult};
 use crate::ports::payment_gateway::PaymentGateway;
+use crate::ports::notification::NotificationService;
 
 use super::commands::{CreateBookingCommand, ExpireBookingCommand, PayBookingCommand};
 
-pub struct BookingCommandHandler<BR: BookingRepository, ER: EventRepository, PG: PaymentGateway> {
+pub struct BookingCommandHandler<
+    BR: BookingRepository,
+    ER: EventRepository,
+    TR: TicketRepository,
+    PG: PaymentGateway,
+    NS: NotificationService,
+> {
     booking_repo: Arc<BR>,
     event_repo: Arc<ER>,
+    ticket_repo: Arc<TR>,
     payment_gateway: Arc<PG>,
+    notification_service: Arc<NS>,
 }
 
-impl<BR: BookingRepository, ER: EventRepository, PG: PaymentGateway>
-    BookingCommandHandler<BR, ER, PG>
+impl<
+        BR: BookingRepository,
+        ER: EventRepository,
+        TR: TicketRepository,
+        PG: PaymentGateway,
+        NS: NotificationService,
+    > BookingCommandHandler<BR, ER, TR, PG, NS>
 {
-    pub fn new(booking_repo: Arc<BR>, event_repo: Arc<ER>, payment_gateway: Arc<PG>) -> Self {
+    pub fn new(
+        booking_repo: Arc<BR>,
+        event_repo: Arc<ER>,
+        ticket_repo: Arc<TR>,
+        payment_gateway: Arc<PG>,
+        notification_service: Arc<NS>,
+    ) -> Self {
         Self {
             booking_repo,
             event_repo,
+            ticket_repo,
             payment_gateway,
+            notification_service,
         }
     }
 
@@ -109,6 +132,15 @@ impl<BR: BookingRepository, ER: EventRepository, PG: PaymentGateway>
         self.event_repo.save(&mut event).await?;
         self.booking_repo.save(&mut booking).await?;
 
+        // Send booking confirmation notification (don't fail if notification fails)
+        if let Err(e) = self
+            .notification_service
+            .send_booking_confirmation(&user_id, &booking_id.to_string())
+            .await
+        {
+            eprintln!("Failed to send booking confirmation: {}", e);
+        }
+
         Ok(self.booking_to_dto(&booking))
     }
 
@@ -129,11 +161,26 @@ impl<BR: BookingRepository, ER: EventRepository, PG: PaymentGateway>
             .await
             .map_err(|e| ApplicationError::PaymentFailed(e))?;
 
-        // Mark booking as paid
+        // Mark booking as paid (this also creates tickets in the domain)
         let now = Utc::now();
         booking.pay(&amount, now)?;
 
+        // Save booking with tickets
         self.booking_repo.save(&mut booking).await?;
+
+        // Save tickets to ticket repository
+        if !booking.tickets.is_empty() {
+            self.ticket_repo.save_multiple(&mut booking.tickets).await?;
+        }
+
+        // Send payment confirmation notification (don't fail if notification fails)
+        if let Err(e) = self
+            .notification_service
+            .send_payment_confirmation(&booking.user_id, &booking_id.to_string())
+            .await
+        {
+            eprintln!("Failed to send payment confirmation: {}", e);
+        }
 
         Ok(self.booking_to_dto(&booking))
     }
