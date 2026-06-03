@@ -12,3 +12,5 @@ CREATE TABLE ticket_categories (
   is_active        BOOLEAN NOT NULL DEFAULT TRUE,
   created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE INDEX ticket_categories_event_id_idx ON ticket_categories (event_id);

@@ -10,6 +10,9 @@ CREATE TABLE bookings (
   status           booking_status NOT NULL DEFAULT 'pending_payment',
   payment_deadline TIMESTAMPTZ NOT NULL,
   created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  UNIQUE (customer_id, event_id, status)  -- only one active booking per customer per event
+  updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE UNIQUE INDEX unique_active_booking ON bookings (customer_id, event_id) WHERE status IN ('pending_payment', 'paid');
+CREATE INDEX bookings_customer_id_idx ON bookings (customer_id);
+CREATE INDEX bookings_event_id_idx ON bookings (event_id);

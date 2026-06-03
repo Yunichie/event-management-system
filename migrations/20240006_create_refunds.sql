@@ -11,3 +11,6 @@ CREATE TABLE refunds (
   requested_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE INDEX refunds_booking_id_idx ON refunds (booking_id);
+CREATE INDEX refunds_customer_id_idx ON refunds (customer_id);
