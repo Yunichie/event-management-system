@@ -17,6 +17,7 @@ pub struct Event {
     pub organizer_id: UserId,
     pub name: String,
     pub description: String,
+    // todo: make into a Location value object
     pub location: String,
     pub start_date: DateTime<Utc>,
     pub end_date: DateTime<Utc>,

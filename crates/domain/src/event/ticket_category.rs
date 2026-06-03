@@ -21,6 +21,7 @@ pub struct TicketCategory {
     pub price: Money,
     pub quota: u32,
     pub remaining_quota: u32,
+    // todo: make into a SalesPeriod value object
     pub sales_start: DateTime<Utc>,
     pub sales_end: DateTime<Utc>,
     pub is_active: bool,
